@@ -105,20 +105,72 @@ resource "aws_instance" "example" {
 
     # If this is the master node
     if [ "$(hostname)" == "master" ]; then
-      sudo kubeadm init --pod-network-cidr=192.168.0.0/16
+      #next line is getting EC2 instance IP, for kubeadm to initiate cluster
+      #we need to get EC2 internal IP address- default ENI is eth0
+      export ipaddr=`ip address|grep eth0|grep inet|awk -F ' ' '{print $2}' |awk -F '/' '{print $1}'`
+      export pubip=`dig +short myip.opendns.com @resolver1.opendns.com`
 
-      # Set up kubeconfig for the ubuntu user
-      mkdir -p $HOME/.kube
-      sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-      sudo chown $(id -u):$(id -g) $HOME/.kube/config
+      # the kubeadm init won't work entel remove the containerd config and restart it.
+      rm /etc/containerd/config.toml
+      systemctl restart containerd
 
-      # Install Calico network plugin
-      kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+      #Kubernetes cluster init
+      #You can replace 172.16.0.0/16 with your desired pod network
+      kubeadm init --apiserver-advertise-address=$ipaddr --pod-network-cidr=172.16.0.0/16 --apiserver-cert-extra-sans=$pubip > /tmp/restult.out
+      cat /tmp/restult.out
+
+      #to get join commdn
+      tail -2 /tmp/restult.out > /tmp/join_command.sh;
+      aws s3 cp /tmp/join_command.sh s3://${s3buckit_name};
+      #this adds .kube/config for root account, run same for ubuntu user, if you need it
+      mkdir -p /root/.kube;
+      cp -i /etc/kubernetes/admin.conf /root/.kube/config;
+      cp -i /etc/kubernetes/admin.conf /tmp/admin.conf;
+      chmod 755 /tmp/admin.conf
+
+      #Add kube config to ubuntu user.
+      mkdir -p /home/ubuntu/.kube;
+      cp -i /etc/kubernetes/admin.conf /home/ubuntu/.kube/config;
+      chmod 755 /home/ubuntu/.kube/config
+
+
+      #to copy kube config file to s3
+      # aws s3 cp /etc/kubernetes/admin.conf s3://${s3buckit_name}
+
+      #Uncomment next line if you want calico Cluster Pod Network
+      curl -o /root/calico.yaml https://docs.projectcalico.org/v3.16/manifests/calico.yaml
+      sleep 5
+      kubectl --kubeconfig /root/.kube/config apply -f /root/calico.yaml
+      systemctl restart kubelet
+
+      # Apply kubectl Cheat Sheet Autocomplete
+      source <(kubectl completion bash) # set up autocomplete in bash into the current shell, bash-completion package should be installed first.
+      echo "source <(kubectl completion bash)" >> /home/ubuntu/.bashrc # add autocomplete permanently to your bash shell.
+      echo "source <(kubectl completion bash)" >> /root/.bashrc # add autocomplete permanently to your bash shell.
+      alias k=kubectl
+      complete -o default -F __start_kubectl k
+      echo "alias k=kubectl" >> /home/ubuntu/.bashrc
+      echo "alias k=kubectl" >> /root/.bashrc
+      echo "complete -o default -F __start_kubectl k" >> /home/ubuntu/.bashrc
+      echo "complete -o default -F __start_kubectl k" >> /root/.bashrc
 
       # Output the join command for the worker nodes
       kubeadm token create --print-join-command > /home/ubuntu/kubeadm_join_command.sh
       sudo chmod +x /home/ubuntu/kubeadm_join_command.sh
     else
+      export ipaddr=`ip address|grep eth0|grep inet|awk -F ' ' '{print $2}' |awk -F '/' '{print $1}'`
+
+
+      # the kubeadm init won't work entel remove the containerd config and restart it.
+      rm /etc/containerd/config.toml
+      systemctl restart containerd
+
+      # to insure the join command start when the installion of master node is done.
+      sleep 1m
+
+      aws s3 cp s3://${s3buckit_name}/join_command.sh /tmp/.
+      chmod +x /tmp/join_command.sh
+      bash /tmp/join_command.sh
       # Wait until the join command script is available from the master
       while [ ! -f /home/ubuntu/kubeadm_join_command.sh ]; do
         sleep 10
