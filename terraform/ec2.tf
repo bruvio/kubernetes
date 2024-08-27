@@ -131,15 +131,15 @@ resource "aws_instance" "master" {
     # Taint master nodes to allow scheduling on them (optional for small setups)
     sudo su
     kubectl taint nodes $HOSTNAME node-role.kubernetes.io/control-plane:NoSchedule-
-
-    wget https://go.dev/dl/go1.21.1.linux-amd64.tar.gz
+    
+    sudo wget https://go.dev/dl/go1.21.1.linux-amd64.tar.gz
     sudo tar -C /usr/local -xzf go1.21.1.linux-amd64.tar.gz
-    echo "export PATH=$PATH:/usr/local/go/bin" >> ~/.bashrc
+    sudo echo "export PATH=$PATH:/usr/local/go/bin" >> ~/.bashrc
     source ~/.bashrc
     go version
-    mkdir -p ~/go/{bin,pkg,src}
-    echo "export GOPATH=$HOME/go" >> ~/.bashrc
-    echo "export PATH=$PATH:$GOPATH/bin" >> ~/.bashrc
+    sudo mkdir -p ~/go/{bin,pkg,src}
+    sudo echo "export GOPATH=$HOME/go" >> ~/.bashrc
+    sudo echo "export PATH=$PATH:$GOPATH/bin" >> ~/.bashrc
     source ~/.bashrc
 
 
@@ -147,17 +147,17 @@ resource "aws_instance" "master" {
     git clone https://github.com/kubernetes/cloud-provider-aws
     # Clone network plugins
     git clone https://github.com/containernetworking/plugins
-    mkdir -p /etc/cni/net.d  /opt/cni/bin
+    sudo mkdir -p /etc/cni/net.d  /opt/cni/bin
    
     # Build and configure network plugins
-    cd ../plugins
+    cd plugins
     ./build_linux.sh
-    cp bin/* /opt/cni/bin/
+    sudo cp bin/* /opt/cni/bin/
 
-    echo "{\"cniVersion\":\"0.3.1\",\"name\":\"mynet\",\"plugins\":[{\"type\":\"bridge\",\"bridge\":\"cni0\",\"isGateway\":true,\"ipMasq\":true,\"ipam\":{\"type\":\"host-local\",\"subnet\":\"\${module.vpc.public_subnets[0]}\",\"routes\":[{\"dst\":\"0.0.0.0/0\"}]}},{\"type\":\"portmap\",\"capabilities\":{\"portMappings\":true},\"snat\":true}]}" > /etc/cni/net.d/10-mynet.conflist
+    sudo echo "{\"cniVersion\":\"0.3.1\",\"name\":\"mynet\",\"plugins\":[{\"type\":\"bridge\",\"bridge\":\"cni0\",\"isGateway\":true,\"ipMasq\":true,\"ipam\":{\"type\":\"host-local\",\"subnet\":\"\${module.vpc.public_subnets[0]}\",\"routes\":[{\"dst\":\"0.0.0.0/0\"}]}},{\"type\":\"portmap\",\"capabilities\":{\"portMappings\":true},\"snat\":true}]}" > /etc/cni/net.d/10-mynet.conflist
 
 
-    echo '{"cniVersion":"0.3.1","type":"loopback"}' > /etc/cni/net.d/99-loopback.conf
+    sudo echo '{"cniVersion":"0.3.1","type":"loopback"}' > /etc/cni/net.d/99-loopback.conf
 
 
     cd ../cloud-provider-aws
@@ -239,7 +239,7 @@ resource "aws_instance" "workers" {
     sudo systemctl start docker
 
     # Install Kubernetes packages
-    sudo apt-get install -y apt-transport-https ca-certificates curl gpg awscli bash-completion
+    sudo apt-get install -y apt-transport-https ca-certificates curl gpg awscli bash-completion make
     sudo mkdir -p -m 755 /etc/apt/keyrings
     curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
