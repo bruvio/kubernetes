@@ -303,18 +303,18 @@ resource "aws_instance" "workers" {
   }
 }
 
-resource "aws_ec2_instance_state" "master" {
-  instance_id = aws_instance.master.id
-  state       = "running"
-  # state       = "stopped"
-}
+# resource "aws_ec2_instance_state" "master" {
+#   instance_id = aws_instance.master.id
 
-resource "aws_ec2_instance_state" "workers" {
-  count       = 2
-  instance_id = aws_instance.workers[count.index].id
-  # state       = "stopped"
-  state = "running"
-}
+#   state       = "stopped"
+# }
+
+# resource "aws_ec2_instance_state" "workers" {
+#   count       = 2
+#   instance_id = aws_instance.workers[count.index].id
+#   state       = "stopped"
+
+# }
 
 
 
