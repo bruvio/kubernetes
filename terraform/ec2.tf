@@ -28,7 +28,7 @@ resource "aws_instance" "master" {
   user_data = <<-EOF
     #!/bin/bash
     export CLUSTER_NAME="bruvio"
-    export K8S_VERSION="1.31.0"
+    export K8S_VERSION="1.30.0"
     export REGION="eu-west-2"
     export NODE_ROLE_ARN="${aws_iam_role.master.arn}"
     export CLUSTER_CIDR="${module.vpc.private_subnets_cidr_blocks[0]}"
@@ -55,10 +55,10 @@ resource "aws_instance" "master" {
     # Install Kubernetes packages
     sudo apt-get install -y apt-transport-https ca-certificates curl gpg awscli bash-completion
     sudo mkdir -p -m 755 /etc/apt/keyrings
-    curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+    curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
     # This overwrites any existing configuration in /etc/apt/sources.list.d/kubernetes.list
-    echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+    echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
 
 
@@ -235,7 +235,7 @@ resource "aws_instance" "workers" {
     volume_type = "gp2"
     volume_size = 30
   }
-  #  to install Client Version: v1.31.0
+  #  to install Client Version: v1.30.0
   # Kustomize Version: v5.4.2
   user_data = <<-EOF
     #!/bin/bash
@@ -258,10 +258,10 @@ resource "aws_instance" "workers" {
     # Install Kubernetes packages
     sudo apt-get install -y apt-transport-https ca-certificates curl gpg awscli bash-completion make
     sudo mkdir -p -m 755 /etc/apt/keyrings
-    curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+    curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
     # This overwrites any existing configuration in /etc/apt/sources.list.d/kubernetes.list
-    echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+    echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
 
 
