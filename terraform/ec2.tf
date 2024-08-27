@@ -130,7 +130,17 @@ resource "aws_instance" "master" {
 
     # Taint master nodes to allow scheduling on them (optional for small setups)
     sudo su
-    kubectl taint nodes master node-role.kubernetes.io/control-plane:NoSchedule-
+    kubectl taint nodes $HOSTNAME node-role.kubernetes.io/control-plane:NoSchedule-
+
+    wget https://go.dev/dl/go1.21.1.linux-amd64.tar.gz
+    sudo tar -C /usr/local -xzf go1.21.1.linux-amd64.tar.gz
+    echo "export PATH=$PATH:/usr/local/go/bin" >> ~/.bashrc
+    source ~/.bashrc
+    go version
+    mkdir -p ~/go/{bin,pkg,src}
+    echo "export GOPATH=$HOME/go" >> ~/.bashrc
+    echo "export PATH=$PATH:$GOPATH/bin" >> ~/.bashrc
+    source ~/.bashrc
 
 
     # Clone cloud-provider-aws
@@ -144,35 +154,11 @@ resource "aws_instance" "master" {
     ./build_linux.sh
     cp bin/* /opt/cni/bin/
 
-    echo '{
-        "cniVersion": "0.3.1",
-        "name": "mynet",
-        "plugins": [
-            {
-                "type": "bridge",
-                "bridge": "cni0",
-                "isGateway": true,
-                "ipMasq": true,
-                "ipam": {
-                    "type": "host-local",
-                    "subnet": "'${module.vpc.public_subnets[0]}'",
-                    "routes": [
-                        { "dst": "0.0.0.0/0"   }
-                    ]
-                }
-            },
-            {
-                "type": "portmap",
-                "capabilities": {"portMappings": true},
-                "snat": true
-            }
-        ]
-    }' > /etc/cni/net.d/10-mynet.conflist
+    echo "{\"cniVersion\":\"0.3.1\",\"name\":\"mynet\",\"plugins\":[{\"type\":\"bridge\",\"bridge\":\"cni0\",\"isGateway\":true,\"ipMasq\":true,\"ipam\":{\"type\":\"host-local\",\"subnet\":\"\${module.vpc.public_subnets[0]}\",\"routes\":[{\"dst\":\"0.0.0.0/0\"}]}},{\"type\":\"portmap\",\"capabilities\":{\"portMappings\":true},\"snat\":true}]}" > /etc/cni/net.d/10-mynet.conflist
 
-    echo '{
-        "cniVersion": "0.3.1",
-        "type": "loopback"
-    }' > /etc/cni/net.d/99-loopback.conf
+
+    echo '{"cniVersion":"0.3.1","type":"loopback"}' > /etc/cni/net.d/99-loopback.conf
+
 
     cd ../cloud-provider-aws
     ./hack/local-up-cluster.sh
