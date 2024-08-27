@@ -72,3 +72,10 @@ output "public_subnets_cidr_blocks" {
 output "aws_iam_role_master" {
   value = aws_iam_role.master.arn
 }
+
+output "ssh_access" {
+  value       = "ssh ubuntu@${aws_instance.master.public_ip} -i ${var.private_key}"
+  depends_on  = [aws_instance.master]
+  description = "The public IP address of the EC2 instance. To connect use `$ ssh ubuntu@<output-ip-addr> -i <your_private_key>`"
+}
+

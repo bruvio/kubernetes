@@ -16,8 +16,11 @@ resource "aws_security_group" "control_plane_sg" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
   tags = {
-    Name = "control-plane-sg"
+
+    Name = var.cluster
+    what = "control-plane-sg"
   }
 }
 

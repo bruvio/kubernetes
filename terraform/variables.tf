@@ -44,3 +44,18 @@ variable "instance_type_worker" {
   description = "EC2 instance type for master node"
   default     = "t2.medium"
 }
+
+variable "cluster" {
+  description = "Name of the kubernetes cluster, to tag the instance with"
+  default     = "bruvio"
+}
+variable "private_key" {
+  description = "Private ssh key to grant access to the instance"
+  default     = "deployer_key"
+}
+
+
+variable "public_key" {
+  description = "Public ssh key to grant access to the instance"
+  default     = "deployer_key.pub"
+}

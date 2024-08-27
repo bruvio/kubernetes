@@ -10,14 +10,14 @@ resource "aws_instance" "master" {
   instance_type          = var.instance_type_master
   vpc_security_group_ids = [aws_security_group.control_plane_sg.id]
   key_name               = aws_key_pair.deployer.key_name
-  root_block_device {
-    volume_size = 20
-  }
+  # root_block_device {
+  #   volume_size = 20
+  # }
   subnet_id            = module.vpc.public_subnets[0]
   iam_instance_profile = aws_iam_instance_profile.master.name
   tags = {
     Name                     = "master"
-    "kubernetes.io/cluster/" = "bruvio"
+    "kubernetes.io/cluster/" = "${var.cluster}"
 
   }
   associate_public_ip_address = true
@@ -30,9 +30,10 @@ resource "aws_instance" "master" {
     CLUSTER_NAME="bruvio"
     K8S_VERSION="1.31.0"
     REGION="eu-west-2"
-    VPC_ID="${module.vpc.vpc_id}"
-    SERVICE_ACCOUNT="aws-load-balancer-controller"
-    NAMESPACE="kube-system"
+
+    # Set plugin for in-cluster networking, set volume plugin to default storage solution for kcm
+    export NET_PLUGIN=kubenet
+    export EXTERNAL_CLOUD_VOLUME_PLUGIN="aws"
     sudo apt-get update -y
     sudo apt-get upgrade -y
 
@@ -79,10 +80,9 @@ resource "aws_instance" "master" {
     sudo systemctl enable kubelet
     sudo kubeadm config images pull --cri-socket unix:///run/containerd/containerd.sock
     INSTANCE_PRIVATE_IP=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)
-    # echo -e "[Global]\nRegion = eu-west-2" | sudo tee /etc/kubernetes/aws.conf
-
+    
  
-    sudo kubeadm init  --apiserver-advertise-address=$INSTANCE_PRIVATE_IP --pod-network-cidr=192.168.0.0/16 
+    sudo kubeadm init  --apiserver-advertise-address=$INSTANCE_PRIVATE_IP --pod-network-cidr="${module.vpc.private_subnets_cidr_blocks[0]}" 
     sudo mkdir -p $HOME/.kube
     sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
     sudo chown $(id -u):$(id -g) $HOME/.kube/config
@@ -133,6 +133,49 @@ resource "aws_instance" "master" {
     kubectl taint nodes master node-role.kubernetes.io/control-plane:NoSchedule-
 
 
+    # Clone cloud-provider-aws
+    git clone https://github.com/kubernetes/cloud-provider-aws
+    # Clone network plugins
+    git clone https://github.com/containernetworking/plugins
+    mkdir -p /etc/cni/net.d  /opt/cni/bin
+   
+    # Build and configure network plugins
+    cd ../plugins
+    ./build_linux.sh
+    cp bin/* /opt/cni/bin/
+
+    echo '{
+        "cniVersion": "0.3.1",
+        "name": "mynet",
+        "plugins": [
+            {
+                "type": "bridge",
+                "bridge": "cni0",
+                "isGateway": true,
+                "ipMasq": true,
+                "ipam": {
+                    "type": "host-local",
+                    "subnet": "'${module.vpc.public_subnets[0]}'",
+                    "routes": [
+                        { "dst": "0.0.0.0/0"   }
+                    ]
+                }
+            },
+            {
+                "type": "portmap",
+                "capabilities": {"portMappings": true},
+                "snat": true
+            }
+        ]
+    }' > /etc/cni/net.d/10-mynet.conflist
+
+    echo '{
+        "cniVersion": "0.3.1",
+        "type": "loopback"
+    }' > /etc/cni/net.d/99-loopback.conf
+
+    cd ../cloud-provider-aws
+    ./hack/local-up-cluster.sh
     echo "### You can now use kubectl to interact with your cluster ###"
 
 
@@ -146,10 +189,15 @@ resource "aws_instance" "master" {
     connection {
       type        = "ssh"
       user        = "ubuntu"
-      private_key = file("deployer_key")
+      private_key = file("${var.private_key}")
       host        = self.public_ip
     }
 
+  }
+  ebs_block_device {
+    device_name = "/dev/sda1"
+    volume_type = "gp2"
+    volume_size = 30
   }
   depends_on = [aws_security_group.control_plane_sg, module.vpc]
 }
@@ -166,18 +214,23 @@ resource "aws_instance" "workers" {
   instance_type          = var.instance_type_worker
   vpc_security_group_ids = [aws_security_group.control_plane_sg.id]
   key_name               = aws_key_pair.deployer.key_name
-  root_block_device {
-    volume_size = 20
-  }
+  # root_block_device {
+  #   volume_size = 20
+  # }
   subnet_id            = module.vpc.public_subnets[count.index]
   iam_instance_profile = aws_iam_instance_profile.worker.name
   tags = {
     Name                     = "worker-${count.index + 1}"
-    "kubernetes.io/cluster/" = "bruvio"
+    "kubernetes.io/cluster/" = "${var.cluster}"
   }
   associate_public_ip_address = true
   private_dns_name_options {
     hostname_type = "resource-name"
+  }
+  ebs_block_device {
+    device_name = "/dev/sda1"
+    volume_type = "gp2"
+    volume_size = 30
   }
   #  to install Client Version: v1.31.0
   # Kustomize Version: v5.4.2
@@ -243,11 +296,24 @@ resource "aws_instance" "workers" {
     connection {
       type        = "ssh"
       user        = "ubuntu"
-      private_key = file("deployer_key")
+      private_key = file("${var.private_key}")
       host        = self.public_ip
     }
 
   }
+}
+
+resource "aws_ec2_instance_state" "master" {
+  instance_id = aws_instance.master.id
+  state       = "running"
+  # state       = "stopped"
+}
+
+resource "aws_ec2_instance_state" "workers" {
+  count       = 2
+  instance_id = aws_instance.workers[count.index].id
+  # state       = "stopped"
+  state = "running"
 }
 
 

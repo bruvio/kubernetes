@@ -1,5 +1,5 @@
 # Upload files recursively from both folders
-resource "aws_s3_bucket_object" "folder1" {
+resource "aws_s3_object" "folder1" {
   for_each = fileset(var.folder1_path, "**/*")
 
   bucket = aws_s3_bucket.this.id
@@ -9,7 +9,7 @@ resource "aws_s3_bucket_object" "folder1" {
   etag   = filemd5("${var.folder1_path}/${each.key}")
 }
 
-resource "aws_s3_bucket_object" "folder2" {
+resource "aws_s3_object" "folder2" {
   for_each = fileset(var.folder2_path, "**/*")
 
   bucket = aws_s3_bucket.this.id
@@ -19,7 +19,7 @@ resource "aws_s3_bucket_object" "folder2" {
   etag   = filemd5("${var.folder2_path}/${each.key}")
 }
 
-resource "aws_s3_bucket_object" "setup" {
+resource "aws_s3_object" "setup" {
 
 
   bucket = aws_s3_bucket.this.id
@@ -30,7 +30,7 @@ resource "aws_s3_bucket_object" "setup" {
   etag = filemd5("./setup_ks8.sh")
 }
 
-resource "aws_s3_bucket_object" "dashboard" {
+resource "aws_s3_object" "dashboard" {
 
 
   bucket = aws_s3_bucket.this.id

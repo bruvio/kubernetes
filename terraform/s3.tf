@@ -6,6 +6,9 @@ resource "random_pet" "bucket_name" {
 resource "aws_s3_bucket" "this" {
   bucket        = random_pet.bucket_name.id
   force_destroy = true
+  tags = {
+    Name = var.cluster
+  }
 }
 
 
