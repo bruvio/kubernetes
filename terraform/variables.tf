@@ -59,3 +59,8 @@ variable "public_key" {
   description = "Public ssh key to grant access to the instance"
   default     = "deployer_key.pub"
 }
+variable "enable_workers" {
+  description = "variable to control creation of worker nodes"
+  type        = bool
+  default     = false
+}

@@ -27,13 +27,16 @@ resource "aws_instance" "master" {
 
   user_data = <<-EOF
     #!/bin/bash
-    CLUSTER_NAME="bruvio"
-    K8S_VERSION="1.31.0"
-    REGION="eu-west-2"
+    export CLUSTER_NAME="bruvio"
+    export K8S_VERSION="1.31.0"
+    export REGION="eu-west-2"
+    export NODE_ROLE_ARN="${aws_iam_role.master.arn}"
+    export CLUSTER_CIDR="${module.vpc.private_subnets_cidr_blocks[0]}"
 
     # Set plugin for in-cluster networking, set volume plugin to default storage solution for kcm
-    export NET_PLUGIN=kubenet
+    export NET_PLUGIN="kubenet"
     export EXTERNAL_CLOUD_VOLUME_PLUGIN="aws"
+
     sudo apt-get update -y
     sudo apt-get upgrade -y
 
@@ -62,7 +65,7 @@ resource "aws_instance" "master" {
 
 
     sudo apt-get update
-    sudo apt-get install -y kubelet kubeadm kubectl vim git curl wget nftables
+    sudo apt-get install -y kubelet kubeadm kubectl vim git curl wget nftables make
  
     sudo apt-mark hold kubelet kubeadm kubectl
     sudo systemctl enable --now kubelet
@@ -134,8 +137,10 @@ resource "aws_instance" "master" {
     
     sudo wget https://go.dev/dl/go1.21.1.linux-amd64.tar.gz
     sudo tar -C /usr/local -xzf go1.21.1.linux-amd64.tar.gz
+
     sudo echo "export PATH=$PATH:/usr/local/go/bin" >> ~/.bashrc
     source ~/.bashrc
+    sudo su
     go version
     sudo mkdir -p ~/go/{bin,pkg,src}
     sudo echo "export GOPATH=$HOME/go" >> ~/.bashrc
@@ -151,6 +156,7 @@ resource "aws_instance" "master" {
    
     # Build and configure network plugins
     cd plugins
+    sudo su
     ./build_linux.sh
     sudo cp bin/* /opt/cni/bin/
 
@@ -164,6 +170,14 @@ resource "aws_instance" "master" {
     ./hack/local-up-cluster.sh
     echo "### You can now use kubectl to interact with your cluster ###"
 
+    LOG_DIR="/var/log/pods/"
+    DESTINATION_DIR="/tmp/"
+
+    mkdir -p $DESTINATION_DIR
+
+    for file in $(find $LOG_DIR -type f -name "*.log"); do
+        cp $file $DESTINATION_DIR/
+    done
 
   EOF
 
@@ -195,7 +209,7 @@ resource "aws_instance" "master" {
 # }
 
 resource "aws_instance" "workers" {
-  count                  = 2
+  count                  = var.enable_workers ? 2 : 0
   ami                    = "ami-08aa7f71c822e5cc9" # Ubuntu AMI
   instance_type          = var.instance_type_worker
   vpc_security_group_ids = [aws_security_group.control_plane_sg.id]
@@ -268,8 +282,16 @@ resource "aws_instance" "workers" {
 
     sudo systemctl enable kubelet
     aws s3 cp  s3://${random_pet.bucket_name.id}/kubeadm_join_command.sh /home/ubuntu/kubeadm_join_command.sh
-    sudo bash ./kubeadm_join_command.sh
+    sudo bash kubeadm_join_command.sh
     
+    LOG_DIR="/var/log/pods/"
+    DESTINATION_DIR="/tmp/"
+
+    mkdir -p $DESTINATION_DIR
+
+    for file in $(find $LOG_DIR -type f -name "*.log"); do
+        cp $file $DESTINATION_DIR/
+    done
   EOF
   # depends_on = [aws_instance.master,time_sleep.wait]
   depends_on = [aws_instance.master, aws_security_group.control_plane_sg, module.vpc]
