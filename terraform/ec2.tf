@@ -41,8 +41,8 @@ resource "aws_instance" "master" {
     sudo apt-get upgrade -y
 
     # Set hostname based on index
-    HOSTNAME=$(curl http://169.254.169.254/latest/meta-data/local-hostname)
-    # HOSTNAME="master"
+    # HOSTNAME=$(curl http://169.254.169.254/latest/meta-data/local-hostname)
+    HOSTNAME="master"
     sudo hostnamectl set-hostname $HOSTNAME
     sudo systemctl restart systemd-hostnamed
 
@@ -138,13 +138,16 @@ resource "aws_instance" "master" {
     sudo wget https://go.dev/dl/go1.21.1.linux-amd64.tar.gz
     sudo tar -C /usr/local -xzf go1.21.1.linux-amd64.tar.gz
 
-    sudo echo "export PATH=$PATH:/usr/local/go/bin" >> ~/.bashrc
-    source ~/.bashrc
-    sudo su
-    go version
+
+    # Set up environment variables
+    echo "export PATH=\$PATH:/usr/local/go/bin" >> ~/.bashrc
+    echo "export GOPATH=\$HOME/go" >> ~/.bashrc
+    echo "export PATH=\$PATH:\$GOPATH/bin" >> ~/.bashrc
+
+    # Create Go workspace directories
     sudo mkdir -p ~/go/{bin,pkg,src}
-    sudo echo "export GOPATH=$HOME/go" >> ~/.bashrc
-    sudo echo "export PATH=$PATH:$GOPATH/bin" >> ~/.bashrc
+
+    # Source the .bashrc to apply environment variables in this script
     source ~/.bashrc
 
 
@@ -239,9 +242,9 @@ resource "aws_instance" "workers" {
     sudo apt-get update -y
     sudo apt-get upgrade -y
 
-    # Set hostname based on index∫
+    # Set hostname based on index
     HOSTNAME="worker-${count.index + 1}"
-    HOSTNAME=$(curl http://169.254.169.254/latest/meta-data/local-hostname)
+    # HOSTNAME=$(curl http://169.254.169.254/latest/meta-data/local-hostname)
     sudo hostnamectl set-hostname $HOSTNAME
     sudo systemctl restart systemd-hostnamed
 
