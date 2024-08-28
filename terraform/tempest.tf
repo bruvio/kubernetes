@@ -10,8 +10,10 @@ module "bruvio" {
 
   # optional
   host_cidr             = "10.0.0.0/16"
+  controller_count      = 1
+  worker_count          = 1
   cluster_domain_suffix = "cluster.local"
-
+  worker_node_labels = ["worker"]
 }
 
 resource "local_file" "kubeconfig-bruvio" {
