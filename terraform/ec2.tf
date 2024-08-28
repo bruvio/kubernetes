@@ -27,15 +27,16 @@ resource "aws_instance" "master" {
 
   user_data = <<-EOF
     #!/bin/bash
-    export CLUSTER_NAME="bruvio"
-    export K8S_VERSION="1.30.0"
-    export REGION="eu-west-2"
-    export NODE_ROLE_ARN="${aws_iam_role.master.arn}"
-    export CLUSTER_CIDR="${module.vpc.private_subnets_cidr_blocks[0]}"
+    sudo echo "export CLUSTER_NAME=bruvio" >> ~/.bashrc
+
+    sudo echo "export K8S_VERSION=1.30.0" >> ~/.bashrc
+    sudo echo "export REGION=eu-west-2" >> ~/.bashrc
+    sudo echo "export NODE_ROLE_ARN=${aws_iam_role.master.arn}" >> ~/.bashrc
+    sudo echo "export CLUSTER_CIDR=${module.vpc.private_subnets_cidr_blocks[0]}" >> ~/.bashrc
 
     # Set plugin for in-cluster networking, set volume plugin to default storage solution for kcm
-    export NET_PLUGIN="kubenet"
-    export EXTERNAL_CLOUD_VOLUME_PLUGIN="aws"
+    sudo echo export NET_PLUGIN=kubenet" >> ~/.bashrc
+    sudo echo export EXTERNAL_CLOUD_VOLUME_PLUGIN=aws" >> ~/.bashrc
 
     sudo apt-get update -y
     sudo apt-get upgrade -y
@@ -140,9 +141,9 @@ resource "aws_instance" "master" {
 
 
     # Set up environment variables
-    echo "export PATH=\$PATH:/usr/local/go/bin" >> ~/.bashrc
-    echo "export GOPATH=\$HOME/go" >> ~/.bashrc
-    echo "export PATH=\$PATH:\$GOPATH/bin" >> ~/.bashrc
+    sudo echo "export PATH=\$PATH:/usr/local/go/bin" >> ~/.bashrc
+    sudo echo "export GOPATH=\$HOME/go" >> ~/.bashrc
+    sudo echo "export PATH=\$PATH:\$GOPATH/bin" >> ~/.bashrc
 
     # Create Go workspace directories
     sudo mkdir -p ~/go/{bin,pkg,src}
