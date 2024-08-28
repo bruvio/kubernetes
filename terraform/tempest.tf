@@ -10,11 +10,12 @@ module "bruvio" {
 
   # optional
   host_cidr             = "10.0.0.0/16"
-  controller_count      = 1
-  worker_count          = 1
   cluster_domain_suffix = "cluster.local"
 
 }
 
-
+resource "local_file" "kubeconfig-bruvio" {
+  content  = module.bruvio.kubeconfig-admin
+  filename = "bruvio-config"
+}
 
