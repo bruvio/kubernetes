@@ -3,7 +3,7 @@ module "bruvio" {
 
   # AWS
   cluster_name = "bruvio"
-  dns_zone     = "brunoviola.net."
+  dns_zone     = "brunoviola.net"
   dns_zone_id  = "Z01104713294GHMBIFP6F"
 
   # instances
