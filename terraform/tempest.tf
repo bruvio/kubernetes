@@ -16,8 +16,5 @@ module "bruvio" {
 
 }
 
-resource "local_file" "kubeconfig-bruvio" {
-  content  = module.bruvio.kubeconfig-admin
-  filename = "bruvio-config"
-}
+
 
