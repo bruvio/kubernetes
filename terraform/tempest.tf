@@ -1,17 +1,19 @@
 module "bruvio" {
   source = "git::https://github.com/poseidon/typhoon//aws/flatcar-linux/kubernetes?ref=v1.30.3"
 
-  # AWS
-  cluster_name = "bruvio"
-  dns_zone     = "brunoviola.net"
-  dns_zone_id  = "Z01104713294GHMBIFP6F"
 
-  # instances
-  worker_count = 2
-  worker_type  = "t3.small"
 
-  # configuration
-  ssh_authorized_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC12i3jUNdHxEWhbngziqUjgXw86Zrnv3vwjQfmovidRbFMB91LSnkBfEqI9OBxWCIWc80VlO9UD6UlPnR9h4LTKXdXUc/m84OEHIe24LdZB7sWei4iOjlC/FQkccH/xRhshBG0IcC3SC1Gvq7bLgoXO5BlLhQS5z1N/H5jaZPxytezw5bmOwdt5ST1ZkQMxn1nVkAY94fQAzbx79/nsHciVzURwhjlzq4GII5E1ojm0Up+m7HKshpcmPaBCz2WS3M1KDGl+BYJ0E7zQavJm/ImwE1pkhraIvunmP4kFIbluW03rY83K7LZr99Q3ZWo4UNwLKV4YFy+YyLJCYmlZokb brunoviola@192.168.1.53"
+  cluster_name       = var.cluster_name
+  dns_zone           = var.dns_zone
+  dns_zone_id        = var.dns_zone_id
+  ssh_authorized_key = var.ssh_authorized_key
+
+  # optional
+  host_cidr             = "10.0.0.0/16"
+  controller_count      = 1
+  worker_count          = 1
+  cluster_domain_suffix = "cluster.local"
+
 }
 
 resource "local_file" "kubeconfig-bruvio" {
