@@ -8,6 +8,8 @@ module "bruvio" {
   dns_zone_id        = var.dns_zone_id
   ssh_authorized_key = var.ssh_authorized_key
   networking         = "calico"
+  network_mtu           = 8981
+
 
   # optional
   host_cidr          = "10.0.0.0/16"
