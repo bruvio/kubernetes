@@ -8,7 +8,7 @@ metadata:
     service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
     service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "instance" # or "ip" depending on your setup
     service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "3600" # Optional: Idle timeout in seconds
-    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443" # If you also want to expose port 443
+    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "6443" # If you also want to expose port 443
 spec:
   type: LoadBalancer
   selector:
@@ -17,3 +17,4 @@ spec:
   - protocol: TCP
     port: 80
     targetPort: 80
+    
