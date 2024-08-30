@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx-ingress
+  annotations:
+<<<<<<< HEAD
+    nginx.ingress.kubernetes.io/rewrite-target: /
+=======
+    nginx.ingress.kubernetes.io/rewrite-target: /  # Rewrite the URL path to /
+>>>>>>> c62f066 (feat: add nginx ingress)
+spec:
+  rules:
+  - host: app.brunoviola.net
+    http:
+      paths:
+<<<<<<< HEAD
+      - path: /
+=======
+      - path: /nginx
+>>>>>>> c62f066 (feat: add nginx ingress)
+        pathType: Prefix
+        backend:
+          service:
+            name: nginx-service
+            port:
+<<<<<<< HEAD
+              number: 80
+=======
+              number: 80
+>>>>>>> c62f066 (feat: add nginx ingress)

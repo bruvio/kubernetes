@@ -10,3 +10,4 @@ spec:
   - port: 80            # The port your NGINX container listens on
     targetPort: 80       # The port inside the container (NGINX listens on 80 by default)
     nodePort: 30333      # The port on the Kubernetes nodes that NLB forwards traffic to
+
