@@ -10,9 +10,9 @@ module "bruvio" {
   networking         = "calico"
   network_mtu        = 8981
   components         = local.custom_components
-  worker_target_groups = [
-    aws_lb_target_group.some-app.id,
-  ]
+  # worker_target_groups = [
+  #   aws_lb_target_group.some-app.id,
+  # ]
 
   # optional
   host_cidr          = "10.0.0.0/16"
@@ -30,8 +30,8 @@ resource "local_file" "kubeconfig-bruvio" {
 
 locals {
   custom_components = {
-    enable     = true
-    coredns    = {
+    enable = true
+    coredns = {
       enable = true
     }
     kube_proxy = null
@@ -44,9 +44,18 @@ locals {
 }
 
 
+resource "null_resource" "wait_for_nodes" {
+  provisioner "local-exec" {
+    command = "${path.module}/check_k8s_nodes.sh"
+  }
+
+  depends_on = [module.bruvio]
+}
+
 resource "null_resource" "apply_nginx_ingress" {
   provisioner "local-exec" {
     command = "kubectl apply -R -f .terraform/modules/bruvio/addons/nginx-ingress/aws"
   }
-}
 
+  depends_on = [null_resource.wait_for_nodes]
+}

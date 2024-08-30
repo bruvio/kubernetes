@@ -27,3 +27,6 @@ tf-plan:
 
 tf-build:
 	terraform apply kubes.plan
+
+tf-destroy:
+	terraform apply -var-file=local.tfvars -auto-approve -destroy
