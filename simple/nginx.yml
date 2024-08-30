@@ -24,10 +24,28 @@ kind: Service
 metadata:
   name: nginx-service
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: nginx
   ports:
-  - port: 80            # The port your NGINX container listens on
-    targetPort: 80       # The port inside the container (NGINX listens on 80 by default)
-    nodePort: 30333      # The port on the Kubernetes nodes that NLB forwards traffic to
+  - port: 80
+    targetPort: 80
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx-ingress
+spec:
+  rules:
+  - host: app.brunoviola.net
+    http:
+      paths:
+      - path: /nginx
+        pathType: Prefix
+        backend:
+          service:
+            name: nginx-service
+            port:
+              number: 80
