@@ -10,7 +10,9 @@ module "bruvio" {
   networking         = "calico"
   network_mtu        = 8981
   components         = local.custom_components
-
+  worker_target_groups = [
+    aws_lb_target_group.some-app.id,
+  ]
 
   # optional
   host_cidr          = "10.0.0.0/16"
@@ -49,3 +51,11 @@ locals {
     cilium = null
   }
 }
+
+
+resource "null_resource" "apply_nginx_ingress" {
+  provisioner "local-exec" {
+    command = "kubectl apply -R -f .terraform/modules/bruvio/addons/nginx-ingress/aws"
+  }
+}
+
