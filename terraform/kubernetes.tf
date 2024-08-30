@@ -8,7 +8,8 @@ module "bruvio" {
   dns_zone_id        = var.dns_zone_id
   ssh_authorized_key = var.ssh_authorized_key
   networking         = "calico"
-  network_mtu           = 8981
+  network_mtu        = 8981
+  components         = local.custom_components
 
 
   # optional
@@ -34,3 +35,17 @@ resource "aws_route53_record" "some-application" {
   records = ["${module.bruvio.ingress_dns_name}."]
 }
 
+locals {
+  custom_components = {
+    enable     = true
+    coredns    = {
+      enable = true
+    }
+    kube_proxy = null
+    flannel    = null
+    calico = {
+      enable = true
+    }
+    cilium = null
+  }
+}
