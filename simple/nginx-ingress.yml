@@ -3,13 +3,13 @@ kind: Ingress
 metadata:
   name: nginx-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/rewrite-target: /  # Rewrite the URL path to /
 spec:
   rules:
   - host: app.brunoviola.net
     http:
       paths:
-      - path: /
+      - path: /nginx
         pathType: Prefix
         backend:
           service:
