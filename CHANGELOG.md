@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/bruvio/kubernetes/compare/1.0.0-typhoon...1.0.1-typhoon) (2024-08-30)
+
+
+### Bug Fixes
+
+* add nginx ingress ([bcfb283](https://github.com/bruvio/kubernetes/commit/bcfb2833a91f77f43336b047034d5cdd5671c6c8))
+
 # 1.0.0 (2024-08-30)
 
 
