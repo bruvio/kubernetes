@@ -50,11 +50,10 @@ module "vpc" {
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "20.8.5"
+  version = "20.24.0"
 
-  cluster_name    = local.cluster_name
-  cluster_version = "1.30"
-
+  cluster_name                             = local.cluster_name
+  cluster_version                          = "1.30"
   cluster_endpoint_public_access           = true
   enable_cluster_creator_admin_permissions = true
 
@@ -81,6 +80,11 @@ module "eks" {
       min_size     = 1
       max_size     = 3
       desired_size = 2
+      metadata_options = {
+        http_endpoint               = "enabled"
+        http_tokens                 = "required"
+        http_put_response_hop_limit = 1
+      }
     }
 
     two = {
@@ -91,6 +95,11 @@ module "eks" {
       min_size     = 1
       max_size     = 2
       desired_size = 1
+      metadata_options = {
+        http_endpoint               = "enabled"
+        http_tokens                 = "required"
+        http_put_response_hop_limit = 1
+      }
     }
   }
 }
@@ -103,7 +112,7 @@ data "aws_iam_policy" "ebs_csi_policy" {
 
 module "irsa-ebs-csi" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version = "5.39.0"
+  version = "5.44.0"
 
   create_role                   = true
   role_name                     = "AmazonEKSTFEBSCSIRole-${module.eks.cluster_name}"
