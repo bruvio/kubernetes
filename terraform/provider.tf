@@ -2,7 +2,7 @@
 
 provider "aws" {
   region  = "eu-west-2"
-  profile = "bruvio_admin"
+  profile = "masterbruvio"
 }
 
 provider "ct" {}

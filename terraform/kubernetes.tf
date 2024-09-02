@@ -1,5 +1,5 @@
 module "bruvio" {
-  source = "git::https://github.com/poseidon/typhoon//aws/flatcar-linux/kubernetes?ref=v1.31.0"
+  source = "git::https://github.com/bruvio/typhoon//aws/flatcar-linux/kubernetes?ref=feature/enable-IMDSv2"
 
 
 
@@ -19,6 +19,8 @@ module "bruvio" {
   controller_count   = 1
   worker_count       = 2
   worker_node_labels = ["worker"]
+  http_tokens = "required"
+  http_put_response_hop_limit = 1
 }
 
 resource "local_file" "kubeconfig-bruvio" {
