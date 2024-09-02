@@ -1,3 +1,21 @@
+# [1.1.0](https://github.com/bruvio/kubernetes/compare/1.0.1-typhoon...1.1.0-typhoon) (2024-09-02)
+
+
+### Bug Fixes
+
+* add null resources to check cluster readiness ([6793096](https://github.com/bruvio/kubernetes/commit/6793096da2a8c734a4416c715312b6a5ebbf53e2))
+* testing ingress ([7235650](https://github.com/bruvio/kubernetes/commit/72356501e149f0717df94fc0e301255bcd6c315a))
+* testing ingress nginx ([f95cd40](https://github.com/bruvio/kubernetes/commit/f95cd4097a5a539636fc306916d6049e07377613))
+* testing ingress nginx ([c3497f1](https://github.com/bruvio/kubernetes/commit/c3497f11991c107d0b6e2eae928242fc3811355d))
+* update nginx ingress controller to compatible version with kubernetes version ([3b66e8d](https://github.com/bruvio/kubernetes/commit/3b66e8d9918869e0325aad9094b489c253f1b2b9))
+
+
+### Features
+
+* add nginx ingress ([eadbc35](https://github.com/bruvio/kubernetes/commit/eadbc35f0a7df74ec1d4b6bd2d9b9f6049532ff3))
+* adding working manifests - using kind to deploy the cluster ([348eddc](https://github.com/bruvio/kubernetes/commit/348eddc0494b37e07c03452141ea647cffb9fb90))
+* enabling IMDSv2 ([be32d2c](https://github.com/bruvio/kubernetes/commit/be32d2c3d3125a5dae6737d60d984a826b6ef480))
+
 ## [1.0.1](https://github.com/bruvio/kubernetes/compare/1.0.0-typhoon...1.0.1-typhoon) (2024-08-30)
 
 
