@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/bruvio/kubernetes/compare/1.0.0-EKS...1.0.1-EKS) (2024-09-02)
+
+
+### Bug Fixes
+
+* refactor code to pass SCP on IMDSv2 ([15131fc](https://github.com/bruvio/kubernetes/commit/15131fc764bfad8b9f962f98f5db3b01c632b41a))
+
 # 1.0.0 (2024-08-30)
 
 
