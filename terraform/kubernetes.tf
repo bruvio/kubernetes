@@ -34,7 +34,9 @@ locals {
     coredns = {
       enable = true
     }
-    kube_proxy = null
+    kube_proxy = {
+      enable = true
+    }
     flannel    = null
     calico = {
       enable = true
@@ -54,7 +56,7 @@ resource "null_resource" "wait_for_nodes" {
 
 resource "null_resource" "apply_nginx_ingress" {
   provisioner "local-exec" {
-    command = "kubectl apply -R -f .terraform/modules/bruvio/addons/nginx-ingress/aws"
+    command = "kubectl apply -R -f ./addons/nginx-ingress/aws"
   }
 
   depends_on = [null_resource.wait_for_nodes]
