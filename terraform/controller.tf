@@ -165,14 +165,16 @@ resource "aws_instance" "master" {
   depends_on = [aws_security_group.control_plane_sg, module.vpc]
 }
 
-# provider "time" {}
-
-# resource "time_sleep" "wait" {
-#   create_duration = "245s"
-# }
 
 
 
+resource "null_resource" "copy_kubeconfig" {
+  provisioner "local-exec" {
+    command = "scp -i ${key-name} ubuntu@${aws_instance.master[0].public_ip}:/etc/kubernetes/admin.conf ~/${var.cluster_name}-admin.conf"
+  }
+
+  depends_on = [aws_instance.your_instance]
+}
 
 
 
