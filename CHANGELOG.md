@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/bruvio/kubernetes/compare/1.1.1-typhoon...1.1.2-typhoon) (2024-09-03)
+
+
+### Bug Fixes
+
+* add local and public ingress test ([3a53ac9](https://github.com/bruvio/kubernetes/commit/3a53ac90c340ff979a2a634cec18f9d2db047057))
+
 ## [1.1.1](https://github.com/bruvio/kubernetes/compare/1.1.0-typhoon...1.1.1-typhoon) (2024-09-03)
 
 
