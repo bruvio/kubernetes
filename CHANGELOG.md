@@ -1,3 +1,10 @@
+## [1.1.3](https://github.com/bruvio/kubernetes/compare/1.1.2-typhoon...1.1.3-typhoon) (2024-09-03)
+
+
+### Bug Fixes
+
+* getting healthy target using Typhoon nginx addon controller ([cc3ef68](https://github.com/bruvio/kubernetes/commit/cc3ef68ff3ceff76f0202b75a48b9b90c41697b0))
+
 ## [1.1.2](https://github.com/bruvio/kubernetes/compare/1.1.1-typhoon...1.1.2-typhoon) (2024-09-03)
 
 
