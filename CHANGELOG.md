@@ -1,3 +1,10 @@
+## [1.1.4](https://github.com/bruvio/kubernetes/compare/1.1.3-typhoon...1.1.4-typhoon) (2024-09-03)
+
+
+### Bug Fixes
+
+* adding missing RBAC permissions for endpoint slices ([7997a40](https://github.com/bruvio/kubernetes/commit/7997a401da616305730725cc16fe2d4c16c2d5b7))
+
 ## [1.1.3](https://github.com/bruvio/kubernetes/compare/1.1.2-typhoon...1.1.3-typhoon) (2024-09-03)
 
 
