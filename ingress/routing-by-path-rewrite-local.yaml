@@ -8,7 +8,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: app.bruvio.brunoviola.net
+  - host: public.my-services.com
     http:
       paths:
       - path: /path-a(/|$)(.*)
@@ -29,7 +29,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: app.bruvio.brunoviola.net
+  - host: public.my-services.com
     http:
       paths:
       - path: /path-b(/|$)(.*)
