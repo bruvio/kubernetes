@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/bruvio/kubernetes/compare/1.1.0-typhoon...1.1.1-typhoon) (2024-09-03)
+
+
+### Bug Fixes
+
+* use nginx-controller downloaded via helm - update test manifests ([e265f04](https://github.com/bruvio/kubernetes/commit/e265f04b9c4b33be31f12b17a833b5698e506457))
+
 # [1.1.0](https://github.com/bruvio/kubernetes/compare/1.0.1-typhoon...1.1.0-typhoon) (2024-09-02)
 
 
