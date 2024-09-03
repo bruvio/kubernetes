@@ -1,0 +1,11 @@
+**kubeadm.conf
+LFS458/
+*.pdf
+*.mp4
+*.docx
+*.txt
+**/deployer_key
+**/deployer_key.pub
+**/terraform.tfstate
+**/.terraform/
+**/.terraform.lock.hcl
