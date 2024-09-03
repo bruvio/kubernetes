@@ -90,23 +90,3 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 80
-
---- 
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: service-a
-spec:
-  ingressClassName: nginx
-  rules:
-  - host: app.mydns.net
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: service-b
-            port:
-              number: 80
----
