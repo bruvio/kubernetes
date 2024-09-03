@@ -15,11 +15,11 @@ module "bruvio" {
   # ]
 
   # optional
-  host_cidr          = "10.0.0.0/16"
-  controller_count   = 1
-  worker_count       = 2
-  worker_node_labels = ["worker"]
-  http_tokens = "required"
+  host_cidr                   = "10.0.0.0/16"
+  controller_count            = 1
+  worker_count                = 2
+  worker_node_labels          = ["worker"]
+  http_tokens                 = "required"
   http_put_response_hop_limit = 1
 }
 
@@ -39,7 +39,7 @@ locals {
     kube_proxy = {
       enable = true
     }
-    flannel    = null
+    flannel = null
     calico = {
       enable = true
     }
