@@ -58,7 +58,8 @@ resource "null_resource" "wait_for_nodes" {
 
 resource "null_resource" "apply_nginx_ingress" {
   provisioner "local-exec" {
-    command = "kubectl apply -R -f ./addons/nginx-ingress/aws"
+    # command = "kubectl apply -R -f ./addons/nginx-ingress/aws"
+    command = "kubectl create namespace ingress-nginx && kubectl apply -f ../manifests/nginx-ingress.1.11.2.yaml"
   }
 
   depends_on = [null_resource.wait_for_nodes]
