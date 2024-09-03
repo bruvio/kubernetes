@@ -170,10 +170,10 @@ resource "aws_instance" "master" {
 
 resource "null_resource" "copy_kubeconfig" {
   provisioner "local-exec" {
-    command = "scp -i ${key-name} ubuntu@${aws_instance.master[0].public_ip}:/etc/kubernetes/admin.conf ~/${var.cluster_name}-admin.conf"
+    command = "scp -i ${var.key-name} ubuntu@${aws_instance.master[0].public_ip}:/etc/kubernetes/admin.conf ~/${var.cluster_name}-admin.conf"
   }
 
-  depends_on = [aws_instance.your_instance]
+  depends_on = [aws_instance.master]
 }
 
 

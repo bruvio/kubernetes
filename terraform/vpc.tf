@@ -2,6 +2,8 @@ data "aws_availability_zones" "available" {}
 
 locals {
   cluster_name = var.Cluster_name
+  vpc_cidr = "10.0.0.0/16"
+  azs      = slice(data.aws_availability_zones.available.names, 0, 3)
 }
 
 resource "random_string" "suffix" {
@@ -9,21 +11,33 @@ resource "random_string" "suffix" {
   special = false
 }
 
+
+
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "5.13.0"
 
   name = var.VPC_name
 
-  cidr = "10.0.0.0/16"
-  azs  = slice(data.aws_availability_zones.available.names, 0, 3)
+  cidr = local.vpc_cidr
 
-  private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
-  public_subnets  = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
+  azs              = local.azs
 
-  enable_nat_gateway   = true
-  single_nat_gateway   = true
+  private_subnets  = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k)]
+  public_subnets   = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 4)]
+  database_subnets = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 8)]
+
+  enable_nat_gateway = true
   enable_dns_hostnames = true
+  create_database_subnet_route_table     = true
+  create_database_internet_gateway_route = true
+
+  enable_ipv6                                   = true
+  public_subnet_assign_ipv6_address_on_creation = true
+
+  public_subnet_ipv6_prefixes   = [0, 1, 2]
+  private_subnet_ipv6_prefixes  = [3, 4, 5]
+  database_subnet_ipv6_prefixes = [6, 7, 8]
 
   public_subnet_tags = {
     "kubernetes.io/cluster/${var.Cluster_name}" = "shared"
