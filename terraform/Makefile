@@ -61,5 +61,5 @@ tf-build:
 # Destroy the infrastructure with the option to pass a tfvars file
 tf-destroy:
 	@printf '\n%s\n' "Destroying infrastructure using $(env)..."
-	terraform apply -var-file=$(env) -auto-approve -destroy
+	terraform apply -var-file=$(env).tfvars -auto-approve -destroy
 

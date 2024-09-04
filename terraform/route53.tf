@@ -1,9 +1,9 @@
 resource "aws_route53_record" "some-application" {
   # DNS zone ID
-  zone_id = "Z01104713294GHMBIFP6F"
+  zone_id = var.dns_zone_id
 
   # DNS record
-  name    = "app.bruvio.brunoviola.net."
+  name    = "app.${var.dns_zone}."
   type    = "CNAME"
   ttl     = 300
   records = ["${module.bruvio.ingress_dns_name}."]
