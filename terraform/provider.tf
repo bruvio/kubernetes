@@ -1,19 +1,16 @@
 
 
 provider "aws" {
-  region  = "eu-west-2"
-  profile = "masterbruvio"
+  region = "eu-west-2"
 }
 
 provider "ct" {}
 
 terraform {
   backend "s3" {
-    bucket         = "terraform-state-bucket-546123287190"
-    key            = "typhoon/terraform.tfstate"
-    region         = "eu-west-2"
-    dynamodb_table = "terraform-lock-546123287190"
-    encrypt        = true
+    key     = "typhoon/terraform.tfstate"
+    region  = "eu-west-2"
+    encrypt = true
   }
   required_providers {
     ct = {
