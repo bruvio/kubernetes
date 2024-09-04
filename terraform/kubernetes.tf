@@ -17,7 +17,7 @@ module "bruvio" {
   # optional
   host_cidr                   = "10.0.0.0/16"
   controller_count            = 1
-  worker_count                = 2
+  worker_count                = 1
   worker_node_labels          = ["worker"]
   http_tokens                 = "required"
   http_put_response_hop_limit = 1
