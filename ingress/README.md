@@ -332,7 +332,39 @@ In the above case, the controller saw ` /path-a/path.html` , routed to service-a
 kubectl logs -l app=service-a
 10.244.0.7 - - [13/Nov/2022:02:28:36 +0000] "GET /path-a.html HTTP/1.1" 200 28 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36"
 ```
+### Kustomization
 
+Kustomize is a configuration management tool that allows you to customize Kubernetes resource configurations without modifying the original YAML files. It works by layering different configurations (called "overlays") on top of a common base. This is useful for managing environments like development, staging, and production, where the core application is the same, but certain parameters (such as replica counts, image tags, or environment-specific settings) need to change. By using overlays and patches, Kustomize enables reusable, maintainable, and version-controlled infrastructure setups, simplifying deployments and ensuring consistency across environments. Its declarative approach integrates seamlessly with kubectl, making it a powerful tool for Kubernetes management.
+
+```
+brew install kustomize
+```
+Kustomize organizes Kubernetes configurations using a clear folder tree structure, which helps manage different environments efficiently. The structure typically consists of a base directory and one or more overlays directories.
+
+    Base Directory: This folder contains the core Kubernetes manifests and a kustomization.yaml file that defines common resources. The base is shared across all environments and contains configurations that are applicable to all environments, such as deployments, services, or config maps.
+
+    Overlays Directory: Each environment (e.g., sandbox, staging, production) has its own subdirectory within the overlays directory. These directories contain a kustomization.yaml file and any environment-specific patches (e.g., patch.yaml) that modify the base configurations for that specific environment. The overlays reference the base and apply changes like updating replicas, image tags, or resource limits without altering the original base files.
+
+This folder tree ensures a clean separation between shared and environment-specific configurations. By using overlays, Kustomize simplifies environment management and makes it easier to maintain consistency and scalability across different deployment stages.
+
+
+in this example we have this working folder tree
+```
+~/WORK/Kubernetes-CKA/ingress/
+  ├── base/
+  │   └── kustomization.yaml
+  │   └── routing-by-path-rewrite.yaml
+  └── overlays/
+      └── sandbox/
+          ├── kustomization.yaml
+          └── patch.yaml
+      └── bruvio/
+          ├── kustomization.yaml
+          └── patch.yaml
+      └── local/
+          ├── kustomization.yaml
+          └── patch.yaml
+```
 
 ### SSL terminating & passthrough
 
