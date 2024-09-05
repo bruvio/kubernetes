@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export KUBECONFIG=bruvio-config
+export KUBECONFIG=$1
 
 # Function to check the status of all nodes
 check_nodes_status() {

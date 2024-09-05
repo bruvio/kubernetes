@@ -17,7 +17,7 @@ module "bruvio" {
   # optional
   host_cidr                   = "10.0.0.0/16"
   controller_count            = 1
-  worker_count                = 1
+  worker_count                = 2
   worker_node_labels          = ["worker"]
   http_tokens                 = "required"
   http_put_response_hop_limit = 1
@@ -50,11 +50,13 @@ locals {
 
 resource "null_resource" "wait_for_nodes" {
   provisioner "local-exec" {
-    command = "${path.module}/check_k8s_nodes.sh"
+    command = "${path.module}/check_k8s_nodes.sh ${path.module}/${var.cluster_name}-config"
   }
 
   depends_on = [module.bruvio]
 }
+
+
 
 resource "null_resource" "apply_nginx_ingress" {
   provisioner "local-exec" {
