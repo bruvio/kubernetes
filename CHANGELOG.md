@@ -1,3 +1,11 @@
+## [1.1.5](https://github.com/bruvio/kubernetes/compare/1.1.4-typhoon...1.1.5-typhoon) (2024-09-05)
+
+
+### Bug Fixes
+
+* reduce number of workers ([0549b53](https://github.com/bruvio/kubernetes/commit/0549b53bc18fa76bdeae6f8f124d630fa2e12433))
+* update script check nodes to allow to dynamically accpet change name ([73c320c](https://github.com/bruvio/kubernetes/commit/73c320cb2d3d4e357f41aef55264cea58e9a4ac7))
+
 ## [1.1.4](https://github.com/bruvio/kubernetes/compare/1.1.3-typhoon...1.1.4-typhoon) (2024-09-03)
 
 
