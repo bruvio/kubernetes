@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/bruvio/kubernetes/compare/1.1.5-typhoon...1.2.0-typhoon) (2024-09-05)
+
+
+### Features
+
+* add kustomization ([b9dee26](https://github.com/bruvio/kubernetes/commit/b9dee26ea5fddfbc284222eba8428ed54c1dab13))
+
 ## [1.1.5](https://github.com/bruvio/kubernetes/compare/1.1.4-typhoon...1.1.5-typhoon) (2024-09-05)
 
 
