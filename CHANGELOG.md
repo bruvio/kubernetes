@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/bruvio/kubernetes/compare/1.2.0-typhoon...1.2.1-typhoon) (2024-09-06)
+
+
+### Bug Fixes
+
+* update makefile and fix wait for node script ([98b2f9d](https://github.com/bruvio/kubernetes/commit/98b2f9dd1fab878f08f7f7b676c712d7b99b6399))
+
 # [1.2.0](https://github.com/bruvio/kubernetes/compare/1.1.5-typhoon...1.2.0-typhoon) (2024-09-05)
 
 
