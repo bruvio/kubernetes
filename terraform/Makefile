@@ -45,7 +45,8 @@ tf-init:
 		fi; \
 		terraform init -get=true -backend-config=./backends/$(env).backend; \
 	else \
-		printf '\n%s\n' 'Terraform is already initialized.'; \
+		printf '\n%s\n' 'Terraform is already initialized. Updating providers...'; \
+		terraform init -upgrade -get=true -backend-config=./backends/$(env).backend; \
 	fi
 
 # Create a Terraform plan with an optional tfvars file

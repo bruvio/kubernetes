@@ -50,7 +50,7 @@ locals {
 
 resource "null_resource" "wait_for_nodes" {
   provisioner "local-exec" {
-    command = "${path.module}/check_k8s_nodes.sh ${path.module}/${var.cluster_name}-config"
+    command = "${abspath(path.module)}/check_k8s_nodes.sh ${abspath(path.module)}/${var.cluster_name}-config"
   }
 
   depends_on = [module.bruvio]
